@@ -1,5 +1,9 @@
-// app/layout.tsx
-import "./globals.css";
+// import "./styles/globals.css";
+
+export const metadata = {
+  title: "Teletext favorites",
+  description: "Teletext viewer, save your favorites",
+};
 
 export default function RootLayout({
   children,
@@ -8,18 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <main
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {children}
-        </main>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

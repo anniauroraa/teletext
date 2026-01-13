@@ -1,0 +1,15 @@
+/* Layout styles for Box */
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Input warning style */
+.input-warning {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
