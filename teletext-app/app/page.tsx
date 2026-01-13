@@ -5,8 +5,10 @@ import Image from "next/image";
 const Home = () => {
   // State for page and subpage
   const [page, setPage] = useState(100); // Only when initializing page
+  const [pageInput, setPageInput] = useState("100");
   const [subpage, setSubpage] = useState(1);
   const [subpageCount, setSubpageCount] = useState(1);
+  const [warning , setWarning] = useState("");
 
   // Fetch subpage count whenever page changes
   useEffect(() => {
@@ -40,12 +42,29 @@ const Home = () => {
   const prevPage = () => setPage((prev) => Math.max(prev - 1, 100));
 
   // Handler for input change
-  const handlePageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
-    if (!isNaN(value)) {
-      const clamped = Math.min(Math.max(value, 100), 899);
-      setPage(clamped);
-      setSubpage(1); // reset subpage when page changes
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+
+    // If user types a 4th digit → reset to that digit
+    if (value.length > 3) {
+      setPageInput(value.slice(-1));
+      return;
+    }
+
+    setPageInput(value);
+  };
+
+  const commitPageInput = () => {
+    const value = Number(pageInput);
+  
+    if (value >= 100 && value <= 899) {
+      setPage(value);
+      setPageInput(String(value));
+      setWarning("");
+      setSubpage(1);
+    } else {
+      setWarning("Vain numerot 100–899 hyväksytään"); 
+      setPageInput(String(page));
     }
   };
 
@@ -62,13 +81,13 @@ const Home = () => {
       <h1 style={{ fontSize: "3rem" }}>{page} {subpage}/{subpageCount}</h1>
 
       {/* Image with subpage navigation */}
-      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <button onClick={prevSubpage}>&lt;</button>
         <Image
           src={`/api/image/${page}/${subpage}`}
           alt={`Teletext ${page}/${subpage}`}
-          width={400}
-          height={520}
+          width={520}
+          height={400}
           unoptimized
         />
         <button onClick={nextSubpage}>&gt;</button>
@@ -81,15 +100,18 @@ const Home = () => {
         </button>
         <input
           type="number"
-          value={page}
-          min={100}
-          max={899}
-          onChange={handlePageInput}
+          value={pageInput}
+          onChange={handlePageInputChange}
+          onFocus={(e) => e.target.select()}
+          onBlur={commitPageInput}
+          onKeyDown={(e) => e.key === "Enter" && commitPageInput()}
+          maxLength={4}
           style={{ width: 60, textAlign: "center" }}
         />
         <button onClick={nextPage}>
           {Math.min(page + 1, 899)} &gt;
         </button>
+        {/* lisää warning */}
       </div>
     </div>
   );
